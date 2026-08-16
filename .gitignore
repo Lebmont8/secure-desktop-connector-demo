@@ -1,0 +1,7 @@
+node_modules/
+desktop-connector/dist/
+desktop-connector/out/
+out/
+*.log
+.DS_Store
+coverage/

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secure Desktop Connector</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/renderer.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header class="hero">
+        <div>
+          <p class="eyebrow">SECURE</p>
+          <h1>Desktop Connector</h1>
+          <p class="subtitle">
+            Локальный защищённый мост к CRM. Текущий runtime — только mock.
+          </p>
+        </div>
+        <span class="badge">v<span id="app-version">—</span></span>
+      </header>
+
+      <aside class="warning">
+        <strong>Не вводи сюда реальные логины, пароли, cookies или сессии.</strong>
+        Этот публичный проект выполняет только детерминированные demo-команды.
+      </aside>
+
+      <section class="card status-grid" aria-label="Статус">
+        <div>
+          <span class="label">OS keychain</span>
+          <strong id="keychain-status">—</strong>
+        </div>
+        <div>
+          <span class="label">Pairing</span>
+          <strong id="pair-status">—</strong>
+        </div>
+        <div>
+          <span class="label">Device ID</span>
+          <strong id="device-id" class="mono">—</strong>
+        </div>
+        <div>
+          <span class="label">CRM</span>
+          <strong id="crm-origin" class="mono">—</strong>
+        </div>
+      </section>
+
+      <section id="pair-card" class="card">
+        <h2>1. Привязать устройство</h2>
+        <p class="muted">
+          OWNER создаёт одноразовый code в CRM. Он не сохраняется локально.
+        </p>
+        <form id="pair-form" class="form-grid">
+          <label>
+            CRM origin
+            <input
+              id="crm-base-url"
+              type="url"
+              placeholder="https://crm.example.com"
+              required
+              autocomplete="off"
+            />
+          </label>
+          <label>
+            Название устройства
+            <input
+              id="device-label"
+              type="text"
+              value="Secure Connector Demo"
+              maxlength="80"
+              required
+              autocomplete="off"
+            />
+          </label>
+          <label class="wide">
+            Одноразовый pairing code
+            <input
+              id="pairing-code"
+              type="password"
+              minlength="32"
+              maxlength="128"
+              required
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </label>
+          <button class="button wide" type="submit">Привязать безопасно</button>
+        </form>
+      </section>
+
+      <section id="runtime-card" class="card" hidden>
+        <div class="section-heading">
+          <div>
+            <h2>2. CRM runtime</h2>
+            <p class="muted">Heartbeat и команды подписываются Ed25519.</p>
+          </div>
+          <button id="run-once" class="button" type="button">
+            Проверить сейчас
+          </button>
+        </div>
+        <dl class="runtime-line">
+          <div>
+            <dt>Состояние</dt>
+            <dd id="runtime-status">—</dd>
+          </div>
+          <div>
+            <dt>Последний цикл</dt>
+            <dd id="last-run">—</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="mock-card" class="card" hidden>
+        <h2>3. Mock-профили</h2>
+        <p class="muted">
+          Нужен profile ID, созданный CRM. Account ref — только тестовая метка,
+          она хранится внутри AES‑GCM vault.
+        </p>
+        <form id="mock-profile-form" class="form-grid">
+          <label>
+            Platform
+            <select id="profile-platform">
+              <option value="demo">Demo platform</option>
+            </select>
+          </label>
+          <label>
+            Profile ID из CRM
+            <input
+              id="profile-id"
+              type="text"
+              maxlength="128"
+              required
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </label>
+          <label class="wide">
+            Mock account ref
+            <input
+              id="mock-account-ref"
+              type="text"
+              maxlength="128"
+              required
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </label>
+          <button class="button wide" type="submit">
+            Сохранить mock-профиль
+          </button>
+        </form>
+        <ul id="profile-list" class="profile-list"></ul>
+      </section>
+
+      <section id="reset-card" class="card danger-card" hidden>
+        <h2>4. Сброс локальной привязки</h2>
+        <p class="muted">
+          Сначала отзови устройство в CRM. Затем удали с этого компьютера
+          локальный token, private key, mock-профили и receipts.
+        </p>
+        <p id="auth-reset-hint" class="auth-reset-hint" hidden>
+          CRM отклонила подпись устройства. Если ты уже нажал Revoke device,
+          сбрось локальную привязку и создай новый pairing code.
+        </p>
+        <button id="forget-pairing" class="button button-danger" type="button">
+          Забыть локальную привязку
+        </button>
+      </section>
+
+      <p id="operation-message" class="operation-message" role="status"></p>
+    </main>
+  </body>
+</html>
