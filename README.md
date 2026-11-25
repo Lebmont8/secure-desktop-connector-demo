@@ -1,8 +1,6 @@
 # Secure Desktop Connector Demo
 
-A runnable, mock-only reference implementation of a secure Electron-to-control-plane bridge.
-
-It demonstrates the hard parts of a desktop connector without containing a real provider driver, browser automation, credentials, cookies or private API calls.
+Pair an Electron app with a demo server, send requests signed with the device key, and inspect the receipts. Electron uses the OS keychain to protect the local vault key. The provider is a mock; no real credentials, cookies, browser automation, or private APIs are included.
 
 ## What it demonstrates
 
